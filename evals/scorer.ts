@@ -38,12 +38,7 @@ async function semanticContains({
   return response === "yes";
 }
 
-type AssertionTypes =
-  | "equals"
-  | "exists"
-  | "not_exists"
-  | "llm_criteria_met"
-  | "semantic_contains";
+type AssertionTypes = "equals" | "exists" | "not_exists" | "llm_criteria_met" | "semantic_contains";
 
 export type Assertion = {
   path: string;
@@ -88,11 +83,10 @@ export const AssertionScorer = async ({
           break;
         case "llm_criteria_met":
           const closedQA = await ClosedQA({
-            input:
-              "According to the provided criterion is the submission correct?",
+            input: "According to the provided criterion is the submission correct?",
             criteria: value,
             output: actualValue,
-            openAiApiKey: "EMPTY",
+            openAiApiKey: process.env.OPENAI_API_KEY as string,
             openAiBaseUrl: process.env.OPENAI_BASE_URL,
           });
           passedTest = !!closedQA.score && closedQA.score > 0.5;

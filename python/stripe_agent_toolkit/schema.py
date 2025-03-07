@@ -75,6 +75,18 @@ class CreatePrice(BaseModel):
         ...,
         description="The currency of the price.",
     )
+    recurring_interval: Optional[str] = Field(
+        None,
+        description="The frequency at which a subscription is billed. One of day, week, month or year.",
+    )
+    recurring_interval_count: Optional[int] = Field(
+        None,
+        description="The number of intervals (specified in recurring_interval) between subscription billings.",
+    )
+    recurring_usage_type: Optional[str] = Field(
+        None,
+        description="Specifies a usage aggregation strategy for prices of usage_type=metered. One of licensed or metered.",
+    )
 
 
 class ListPrices(BaseModel):

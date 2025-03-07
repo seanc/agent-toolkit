@@ -233,6 +233,52 @@ describe('createPrice', () => {
     expect(result).toEqual(mockPrice);
   });
 
+  it('should create a recurring price with all recurring parameters', async () => {
+    const params = {
+      unit_amount: 1000,
+      currency: 'usd',
+      product: 'prod_123456',
+      recurring_interval: 'month',
+      recurring_interval_count: 3,
+      recurring_usage_type: 'licensed',
+    };
+
+    const context = {};
+
+    const mockPrice = {
+      id: 'price_123456',
+      unit_amount: 1000,
+      currency: 'usd',
+      recurring: {
+        interval: 'month',
+        interval_count: 3,
+        usage_type: 'licensed',
+      },
+    };
+
+    stripe.prices.create.mockResolvedValue(mockPrice);
+
+    const result = await createPrice(stripe, context, params);
+
+    // The function should transform the params into the correct format
+    const expectedPriceData = {
+      unit_amount: 1000,
+      currency: 'usd',
+      product: 'prod_123456',
+      recurring: {
+        interval: 'month',
+        interval_count: 3,
+        usage_type: 'licensed',
+      },
+    };
+
+    expect(stripe.prices.create).toHaveBeenCalledWith(
+      expectedPriceData,
+      undefined
+    );
+    expect(result).toEqual(mockPrice);
+  });
+
   it('should specify the connected account if included in context', async () => {
     const params = {
       unit_amount: 1000,

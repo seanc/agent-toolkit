@@ -100,7 +100,10 @@ def list_products(context: Context, limit: Optional[int] = None):
 
 
 def create_price(
-    context: Context, product: str, currency: str, unit_amount: int
+    context: Context, product: str, currency: str, unit_amount: int,
+    recurring_interval: Optional[str] = None,
+    recurring_interval_count: Optional[int] = None,
+    recurring_usage_type: Optional[str] = None
 ):
     """
     Create a price.
@@ -109,6 +112,9 @@ def create_price(
         product (str): The ID of the product.
         currency (str): The currency of the price.
         unit_amount (int): The unit amount of the price.
+        recurring_interval (str, optional): The frequency at which a subscription is billed. One of day, week, month or year.
+        recurring_interval_count (int, optional): The number of intervals between subscription billings.
+        recurring_usage_type (str, optional): Specifies a usage aggregation strategy for prices. One of licensed or metered.
 
     Returns:
         stripe.Price: The created price.
@@ -118,6 +124,21 @@ def create_price(
         "currency": currency,
         "unit_amount": unit_amount,
     }
+
+    # Add recurring parameters if provided
+    if recurring_interval:
+        recurring = {
+            "interval": recurring_interval
+        }
+
+        if recurring_interval_count:
+            recurring["interval_count"] = recurring_interval_count
+
+        if recurring_usage_type:
+            recurring["usage_type"] = recurring_usage_type
+
+        price_data["recurring"] = recurring
+
     if context.get("account") is not None:
         account = context.get("account")
         if account is not None:

@@ -16,8 +16,7 @@ export const TEST_CASES: {
       {
         path: "responseChatCompletions[0].content",
         assertion_type: "llm_criteria_met",
-        value:
-          "The message should include a successful product creation response",
+        value: "The message should include a successful product creation response",
       },
     ],
   },
@@ -32,14 +31,12 @@ export const TEST_CASES: {
       {
         path: "messages",
         assertion_type: "llm_criteria_met",
-        value:
-          "The messages should include a list of products returned from the Stripe API",
+        value: "The messages should include a list of products returned from the Stripe API",
       },
     ],
   },
   {
-    input:
-      "Create a customer named 'Test Customer' with email 'test@example.com'",
+    input: "Create a customer named 'Test Customer' with email 'test@example.com'",
     expected: [
       {
         path: "messages[1].tool_calls[0].function.name",
@@ -49,8 +46,23 @@ export const TEST_CASES: {
       {
         path: "messages",
         assertion_type: "llm_criteria_met",
+        value: "The messages should include a successful customer creation response",
+      },
+    ],
+  },
+  {
+    input: "Create a recurring monthly subscription price of $29.99 for the product 'Premium Plan'",
+    expected: [
+      {
+        path: "messages",
+        assertion_type: "llm_criteria_met",
         value:
-          "The messages should include a successful customer creation response",
+          "The messages should include a sequence of: product creation and recurring price creation with monthly interval",
+      },
+      {
+        path: "messages",
+        assertion_type: "llm_criteria_met",
+        value: "The price creation should include recurring components with interval set to month",
       },
     ],
   },

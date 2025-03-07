@@ -225,6 +225,36 @@ class TestStripeFunctions(unittest.TestCase):
 
             self.assertEqual(result, {"id": mock_price["id"]})
 
+    def test_create_recurring_price(self):
+        with mock.patch("stripe.Price.create") as mock_function:
+            mock_price = {"id": "price_123"}
+            mock_function.return_value = stripe.Price.construct_from(
+                mock_price, "sk_test_123"
+            )
+
+            result = create_price(
+                context={},
+                product="prod_123",
+                currency="usd",
+                unit_amount=1000,
+                recurring_interval="month",
+                recurring_interval_count=3,
+                recurring_usage_type="licensed",
+            )
+
+            mock_function.assert_called_with(
+                product="prod_123",
+                currency="usd",
+                unit_amount=1000,
+                recurring={
+                    "interval": "month",
+                    "interval_count": 3,
+                    "usage_type": "licensed",
+                },
+            )
+
+            self.assertEqual(result, {"id": mock_price["id"]})
+
     def test_create_price_with_context(self):
         with mock.patch("stripe.Price.create") as mock_function:
             mock_price = {"id": "price_123"}

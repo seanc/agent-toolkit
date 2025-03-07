@@ -92,8 +92,35 @@ export const createPrice = async (
   params: z.infer<typeof createPriceParameters>
 ) => {
   try {
+    const {
+      recurring_interval: recurringInterval,
+      recurring_interval_count: recurringIntervalCount,
+      recurring_usage_type: recurringUsageType,
+      ...baseParams
+    } = params;
+
+    // Prepare price data
+    const priceData: any = {...baseParams};
+
+    // Add recurring components if interval is provided
+    if (recurringInterval) {
+      const recurring: any = {
+        interval: recurringInterval,
+      };
+
+      if (recurringIntervalCount) {
+        recurring.interval_count = recurringIntervalCount;
+      }
+
+      if (recurringUsageType) {
+        recurring.usage_type = recurringUsageType;
+      }
+
+      priceData.recurring = recurring;
+    }
+
     const price = await stripe.prices.create(
-      params,
+      priceData,
       context.account ? {stripeAccount: context.account} : undefined
     );
 

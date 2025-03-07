@@ -7,12 +7,15 @@ import { Eval, wrapOpenAI } from "braintrust";
 import { AssertionScorer } from "./scorer";
 import { TEST_CASES } from "./cases";
 
+// Get model from environment variable or default to gpt-4o
+const MODEL = process.env.OPENAI_MODEL || "gpt-4o";
+
 // This wrap function adds useful tracing in Braintrust
 export const openai = wrapOpenAI(
   new OpenAI({
     baseURL: process.env.OPENAI_BASE_URL,
-    apiKey: "EMPTY",
-  })
+    apiKey: process.env.OPENAI_API_KEY,
+  }),
 );
 
 const stripeAgentToolkit = new StripeAgentToolkit({
@@ -54,7 +57,7 @@ async function task(input: string) {
   while (true) {
     // eslint-disable-next-line no-await-in-loop
     completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: MODEL,
       messages,
       tools: stripeAgentToolkit.getTools(),
     });
@@ -66,7 +69,7 @@ async function task(input: string) {
     if (message.tool_calls?.length! > 0) {
       // eslint-disable-next-line no-await-in-loop
       const toolMessages = await Promise.all(
-        message.tool_calls!.map((tc) => stripeAgentToolkit.handleToolCall(tc))
+        message.tool_calls!.map((tc) => stripeAgentToolkit.handleToolCall(tc)),
       );
 
       messages = [...messages, ...toolMessages];
@@ -82,6 +85,9 @@ async function task(input: string) {
 }
 
 const BRAINTRUST_PROJECT = "agent-toolkit";
+
+// Log which model is being used
+console.log(`Running evaluations with model: ${MODEL}`);
 
 async function main() {
   await Eval(BRAINTRUST_PROJECT, {

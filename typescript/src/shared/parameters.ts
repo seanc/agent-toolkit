@@ -52,6 +52,23 @@ export const createPriceParameters = z.object({
     .int()
     .describe('The unit amount of the price in cents.'),
   currency: z.string().describe('The currency of the price.'),
+  recurring_interval: z
+    .string()
+    .optional()
+    .describe(
+      'The frequency at which a subscription is billed. One of day, week, month or year.'
+    ),
+  recurring_interval_count: z
+    .number()
+    .int()
+    .optional()
+    .describe('The number of intervals between subscription billings.'),
+  recurring_usage_type: z
+    .string()
+    .optional()
+    .describe(
+      'Specifies a usage aggregation strategy for prices. One of licensed or metered.'
+    ),
 });
 
 export const listPricesParameters = z.object({

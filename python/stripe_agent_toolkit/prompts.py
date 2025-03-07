@@ -31,10 +31,15 @@ CREATE_PRICE_PROMPT = """
 This tool will create a price in Stripe. If a product has not already been
 specified, a product should be created first.
 
-It takes three arguments:
+It takes three required arguments:
 - product (str): The ID of the product to create the price for.
 - unit_amount (int): The unit amount of the price in cents.
 - currency (str): The currency of the price.
+
+And three optional arguments to set up recurring components:
+- recurring_interval (str, optional): The frequency at which a subscription is billed. One of day, week, month or year.
+- recurring_interval_count (int, optional): The number of intervals between subscription billings.
+- recurring_usage_type (str, optional): Specifies a usage aggregation strategy for prices. One of licensed or metered.
 """
 
 LIST_PRICES_PROMPT = """
